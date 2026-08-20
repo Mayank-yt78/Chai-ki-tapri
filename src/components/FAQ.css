@@ -1,8 +1,8 @@
 /* ================= FAQ ================= */
 
 .faq-section {
-    height: 100vh;
-  padding: 100px 8% 110px;
+  min-height: 100vh;
+  padding: clamp(88px, 10vw, 120px) 8% 110px;
   background: #1c0801;
 }
 
@@ -88,7 +88,7 @@
   align-items: center;
   justify-content: space-between;
 
-  padding: 5px 20px;
+  padding: 16px 20px;
 
   border: none;
 
@@ -173,7 +173,8 @@
 
 @media (max-width: 768px) {
   .faq-section {
-    padding: 80px 6%;
+    min-height: auto;
+    padding: 88px 6% 72px;
   }
 
   .faq-header {
@@ -181,13 +182,19 @@
   }
 
   .faq-header h2 {
-    font-size: 42px;
+    font-size: clamp(34px, 9vw, 42px);
+  }
+
+  .faq-header h2 br {
+    display: none;
   }
 
   .faq-question {
-    padding: 18px;
+    gap: 12px;
+    padding: 16px;
 
     font-size: 15px;
+    line-height: 1.45;
   }
 
   .faq-answer p {
@@ -199,5 +206,21 @@
   .faq-icon {
     min-width: 36px;
     height: 36px;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  .faq-section {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .faq-question {
+    padding: 14px;
+  }
+
+  .faq-answer p {
+    padding: 0 14px;
   }
 }

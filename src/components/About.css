@@ -1,8 +1,9 @@
 /* ================= ABOUT ================= */
 
 .about-section {
-    height: 100vh;
-  padding: 100px 8% 110px;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: clamp(88px, 10vw, 120px) 8% 110px;
   background: #210d07;
 }
 
@@ -123,7 +124,7 @@
 }
 
 /* INSPIRATION */
-
+    
 .inspiration-note {
   margin-top: 35px;
 
@@ -143,15 +144,41 @@
   text-decoration: underline;
 }
 
+@media (min-width: 769px) and (max-width: 1200px) {
+  .about-section {
+    padding: 78px 6% 64px;
+  }
+
+  .feature-grid {
+    gap: 18px;
+    margin-top: 42px;
+  }
+
+  .feature-card {
+    min-height: 190px;
+    padding: 22px;
+  }
+
+  .feature-icon {
+    margin-bottom: 18px;
+  }
+}
+
 /* RESPONSIVE */
 
 @media (max-width: 768px) {
   .about-section {
-    padding: 80px 6%;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 88px 6% 60px;
   }
 
   .about-header h2 {
-    font-size: 42px;
+    font-size: clamp(34px, 9vw, 42px);
+  }
+
+  .about-header h2 br {
+    display: none;
   }
 
   .about-header p {
@@ -169,6 +196,10 @@
   .feature-card {
     min-height: auto;
 
-    padding: 25px;
+    padding: 24px;
+  }
+
+  .inspiration-note {
+    line-height: 1.6;
   }
 }

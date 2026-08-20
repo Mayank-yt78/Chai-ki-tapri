@@ -1,0 +1,529 @@
+    @import "tailwindcss";
+    @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap");
+
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    }
+
+    html {
+    scroll-behavior: smooth;
+    }
+
+    body {
+    font-family: "Poppins", "Noto Sans Devanagari", sans-serif;
+    background: #100b08;
+    color: white;
+    }
+
+    /* ================= NAVBAR ================= */
+
+    .navbar {
+    position: fixed;
+    top: 20px;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 0 5%;
+    }
+
+    .nav-container {
+    max-width: 1300px;
+    margin: auto;
+
+    height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 25px;
+
+    background: rgba(20, 12, 8, 0.6);
+    backdrop-filter: blur(16px);
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    border-radius: 20px;
+    }
+
+    .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: #f5c36b;
+    text-decoration: none;
+
+    font-size: 22px;
+    font-weight: 700;
+    }
+
+    .desktop-nav {
+    display: flex;
+    gap: 30px;
+    }
+
+    .desktop-nav a {
+    color: #eee;
+    text-decoration: none;
+
+    font-size: 14px;
+
+    transition: 0.3s;
+    }
+
+    .desktop-nav a:hover {
+    color: #f5c36b;
+    }
+
+    .nav-button {
+    display: none;
+
+    background: transparent;
+    border: none;
+
+    color: white;
+    cursor: pointer;
+    }
+
+    /* ================= HERO ================= */
+
+    .hero {
+    min-height: 100vh;
+
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    padding: 120px 8% 60px;
+
+    background-size: cover;
+    background-position: center;
+    }
+
+    .hero-overlay {
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+        90deg,
+        rgba(10, 6, 4, 0.92) 0%,
+        rgba(10, 6, 4, 0.7) 35%,
+        rgba(10, 6, 4, 0.25) 70%,
+        rgba(10, 6, 4, 0.4) 100%
+        );
+    }
+
+    .hero-content {
+    position: relative;
+    z-index: 2;
+
+    max-width: 700px;
+    }
+
+    .open-badge {
+    width: fit-content;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 9px 16px;
+
+    border-radius: 30px;
+
+    background: rgba(245, 195, 107, 0.12);
+
+    border: 1px solid rgba(245, 195, 107, 0.4);
+
+    color: #f5c36b;
+
+    font-size: 14px;
+    }
+
+    .pulse {
+    width: 8px;
+    height: 8px;
+
+    background: #5cff7a;
+
+    border-radius: 50%;
+
+    box-shadow: 0 0 12px #5cff7a;
+    }
+
+    .hero-subtitle {
+    margin-top: 30px;
+
+    color: #f5c36b;
+
+    font-size: 18px;
+    letter-spacing: 1px;
+    }
+
+    .hero h1 {
+    font-family: "Noto Sans Devanagari", sans-serif;
+
+    font-size: clamp(60px, 9vw, 130px);
+
+    line-height: 1.1;
+
+    margin: 10px 0 20px;
+
+    font-weight: 800;
+    }
+
+    .hero h1 span {
+    color: #d9903d;
+    }
+
+    .hero-description {
+    max-width: 600px;
+
+    color: #ddd;
+
+    font-size: 17px;
+    line-height: 1.8;
+    }
+
+    .hero-buttons {
+    display: flex;
+    gap: 15px;
+
+    margin-top: 35px;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 15px 25px;
+
+    border-radius: 12px;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+    }
+
+    .primary-btn {
+    border: none;
+
+    background: #d9903d;
+    color: #1b1008;
+    }
+
+    .primary-btn:hover {
+    transform: translateY(-3px);
+
+    box-shadow: 0 10px 30px rgba(217, 144, 61, 0.35);
+    }
+
+    .secondary-btn {
+    color: white;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    }
+
+    .scroll-down {
+    position: absolute;
+
+    z-index: 2;
+
+    bottom: 35px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    color: #ddd;
+
+    font-size: 12px;
+
+    animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+    0%,
+    100% {
+        transform: translate(-50%, 0);
+    }
+
+    50% {
+        transform: translate(-50%, 10px);
+    }
+    }
+
+    /* ================= MOBILE ================= */
+
+    @media (max-width: 768px) {
+
+    .navbar {
+        top: 10px;
+        padding: 0 15px;
+    }
+
+    .desktop-nav {
+        display: none;
+    }
+
+    .nav-button {
+        display: block;
+    }
+
+    .mobile-nav {
+        margin-top: 10px;
+
+        display: flex;
+        flex-direction: column;
+
+        background: rgba(20, 12, 8, 0.95);
+
+        backdrop-filter: blur(15px);
+
+        border-radius: 15px;
+
+        padding: 20px;
+    }
+
+    .mobile-nav a {
+        color: white;
+
+        text-decoration: none;
+
+        padding: 12px 0;
+    }
+
+    .hero {
+        text-align: center;
+
+        justify-content: center;
+
+        background-position: 65% center;
+    }
+
+    .hero-overlay {
+        background: rgba(10, 6, 4, 0.72);
+    }
+
+    .hero-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+
+        width: 100%;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+        justify-content: center;
+    }
+
+    .hero-description {
+        font-size: 15px;
+    }
+    }
+
+
+    /* Hide the actual YouTube player */
+
+    .youtube-player {
+    position: fixed;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    }
+
+
+    /* MUSIC PLAYER */
+
+    .music-player {
+    position: fixed;
+
+    right: 30px;
+    bottom: 30px;
+
+    width: 280px;
+
+    z-index: 1000;
+
+    padding: 20px;
+
+    background: rgba(30, 18, 10, 0.88);
+
+    backdrop-filter: blur(18px);
+
+    border: 1px solid rgba(217, 144, 61, 0.3);
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.4);
+    }
+
+
+    /* HEADER */
+
+    .music-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-bottom: 18px;
+    }
+
+    .music-icon {
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 12px;
+
+    background: #d9903d;
+    color: #1b1008;
+    }
+
+    .now-playing {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+
+    color: #d9903d;
+    }
+
+    .music-header h3 {
+    margin-top: 3px;
+
+    font-size: 16px;
+    }
+
+
+    /* PROGRESS */
+
+    .progress-section {
+    margin-bottom: 15px;
+    }
+
+    .progress-bar {
+    width: 100%;
+
+    accent-color: #d9903d;
+
+    cursor: pointer;
+    }
+
+    .time-info {
+    display: flex;
+    justify-content: space-between;
+
+    margin-top: 4px;
+
+    color: #aaa;
+
+    font-size: 11px;
+    }
+
+
+    /* CONTROLS */
+
+    .player-controls {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 18px;
+
+    margin-bottom: 15px;
+    }
+
+    .player-controls button,
+    .volume-control button {
+    border: none;
+
+    background: transparent;
+
+    color: white;
+
+    cursor: pointer;
+    }
+
+    .play-button {
+    width: 50px;
+    height: 50px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50% !important;
+
+    background: #d9903d !important;
+
+    color: #1b1008 !important;
+
+    transition: 0.3s;
+    }
+
+    .play-button:hover {
+    transform: scale(1.08);
+    }
+
+
+    /* VOLUME */
+
+    .volume-control {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding-top: 10px;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .volume-control input {
+    width: 100%;
+
+    accent-color: #d9903d;
+    }
+
+
+    /* MOBILE */
+
+    @media (max-width: 768px) {
+
+    .music-player {
+        width: calc(100% - 30px);
+
+        right: 15px;
+        bottom: 15px;
+    }
+
+    }

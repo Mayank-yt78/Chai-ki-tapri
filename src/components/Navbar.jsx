@@ -4,7 +4,7 @@ import { useState } from "react";
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const navItems = ["Home", "हमारी टपरी", "Menu", "Gallery", "Contact"];
+  const navItems = ["हमारी टपरी", "Menu", "Gallery", "About", "FAQ"];
 
   return (
     <nav className="navbar">

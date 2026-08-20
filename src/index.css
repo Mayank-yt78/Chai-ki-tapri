@@ -40,12 +40,8 @@
 
     padding: 0 25px;
 
-    background: rgba(20, 12, 8, 0.6);
-    backdrop-filter: blur(16px);
-
-    border: 1px solid rgba(255, 255, 255, 0.12);
-
-    border-radius: 20px;
+    background: transparent;
+    
     }
 
     .logo {
@@ -63,6 +59,14 @@
     .desktop-nav {
     display: flex;
     gap: 30px;
+     padding: 10px 30px;
+
+    background: rgba(20, 12, 8, 0.6);
+    backdrop-filter: blur(16px);
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    border-radius: 20px;
     }
 
     .desktop-nav a {
@@ -104,19 +108,18 @@
     background-position: center;
     }
 
-    .hero-overlay {
-    position: absolute;
-    inset: 0;
+   .hero-overlay {
+  position: absolute;
+  inset: 0;
 
-    background:
-        linear-gradient(
-        90deg,
-        rgba(10, 6, 4, 0.92) 0%,
-        rgba(10, 6, 4, 0.7) 35%,
-        rgba(10, 6, 4, 0.25) 70%,
-        rgba(10, 6, 4, 0.4) 100%
-        );
-    }
+  background: linear-gradient(
+    90deg,
+    rgba(8, 5, 3, 0.55) 0%,
+    rgba(8, 5, 3, 0.28) 45%,
+    rgba(8, 5, 3, 0.05) 70%,
+    rgba(8, 5, 3, 0.08) 100%
+  );
+}
 
     .hero-content {
     position: relative;
@@ -374,9 +377,9 @@
 
     padding: 20px;
 
-    background: rgba(30, 18, 10, 0.88);
+    background: transparent;
 
-    backdrop-filter: blur(18px);
+    backdrop-filter: blur(10px);
 
     border: 1px solid rgba(217, 144, 61, 0.3);
 

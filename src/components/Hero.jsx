@@ -1,33 +1,87 @@
 import { useEffect, useState } from "react";
-import { Coffee, MapPin, ArrowDown } from "lucide-react";
+import { Coffee, MapPin, ArrowDown, Clock } from "lucide-react";
 import socket from "../socket";
-import chaiTapri from "../assets/image.png";
+
+import morningChai from "../assets/morning-chai.png";
+import afternoonChai from "../assets/image.png";
+import nightChai from "../assets/night-chai.png";
 
 function Hero() {
   const [onlineUsers, setOnlineUsers] = useState(0);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // ================= LIVE AUDIENCE =================
 
   useEffect(() => {
-    // Listen for live audience updates
     socket.on("audienceCount", (count) => {
       setOnlineUsers(count);
     });
 
-    // Cleanup listener when component unmounts
     return () => {
       socket.off("audienceCount");
     };
   }, []);
 
+  // ================= LIVE INDIA TIME =================
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Get current hour in India
+  const indiaHour = Number(
+    new Intl.DateTimeFormat("en-IN", {
+      timeZone: "Asia/Kolkata",
+      hour: "numeric",
+      hour12: false,
+    }).format(currentTime)
+  );
+
+  // ================= TIME BASED CONTENT =================
+
+  let backgroundImage = afternoonChai;
+  let chaiTime = "दोपहर वाली चाय";
+  let tagline = "दोपहर की थकान मिटाए, एक गरमा गरम चाय हो जाए ☕";
+
+  if (indiaHour >= 5 && indiaHour < 12) {
+    backgroundImage = morningChai;
+    chaiTime = "सुबह वाली चाय";
+    tagline = "सुबह की पहली चुस्की, दिन की सबसे अच्छी शुरुआत ☕";
+  } else if (indiaHour >= 12 && indiaHour < 18) {
+    backgroundImage = afternoonChai;
+    chaiTime = "दोपहर वाली चाय";
+    tagline = "दोपहर की थकान मिटाए, एक गरमा गरम चाय हो जाए ☕";
+  } else {
+    backgroundImage = nightChai;
+    chaiTime = "रात वाली चाय";
+    tagline = "रात की बातें और हाथों में गरमा गरम चाय ☕";
+  }
+
+  // Format India time
+  const formattedTime = new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  }).format(currentTime);
+
   return (
     <section
       className="hero"
       style={{
-        backgroundImage: `url(${chaiTapri})`,
+        backgroundImage: `url(${backgroundImage})`,
       }}
     >
       <div className="hero-overlay"></div>
 
       <div className="hero-content">
+
+        {/* Open + Live Audience */}
 
         <div className="open-badge">
           <span className="pulse"></span>
@@ -39,18 +93,38 @@ function Hero() {
           </span>
         </div>
 
+
+        {/* Time Based Chai */}
+
         <p className="hero-subtitle">
-          एक कप चाय, सारी थकान दूर
+          {chaiTime}
         </p>
+
+
+        {/* Main Heading */}
 
         <h1>
           चाय की <span>टपरी</span>
         </h1>
 
+
+        {/* Dynamic Description */}
+
         <p className="hero-description">
-          जहाँ हर कप में स्वाद है, हर बातचीत में अपनापन है,
-          और हर शाम यादगार बन जाती है।
+          {tagline}
         </p>
+
+
+        {/* India Current Time */}
+
+        <div className="india-time">
+          <Clock size={16} />
+
+          <span>India Time · {formattedTime}</span>
+        </div>
+
+
+        {/* Buttons */}
 
         <div className="hero-buttons">
 
@@ -67,6 +141,9 @@ function Hero() {
         </div>
 
       </div>
+
+
+      {/* Scroll Down */}
 
       <div className="scroll-down">
         <span>Scroll to explore</span>

@@ -268,6 +268,35 @@
 
     animation: bounce 2s infinite;
     }
+    .india-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 18px;
+
+  width: fit-content;
+
+  padding: 9px 14px;
+
+  color: #f5c36b;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  background: rgba(20, 12, 8, 0.45);
+
+  border: 1px solid rgba(245, 195, 107, 0.22);
+
+  border-radius: 10px;
+
+  backdrop-filter: blur(8px);
+}
+@media (max-width: 768px) {
+  .india-time {
+    justify-content: center;
+  }
+}
 
     @keyframes bounce {
     0%,

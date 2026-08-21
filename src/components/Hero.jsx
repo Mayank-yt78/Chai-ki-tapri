@@ -1,7 +1,23 @@
+import { useEffect, useState } from "react";
 import { Coffee, MapPin, ArrowDown } from "lucide-react";
+import socket from "../socket";
 import chaiTapri from "../assets/image.png";
 
 function Hero() {
+  const [onlineUsers, setOnlineUsers] = useState(0);
+
+  useEffect(() => {
+    // Listen for live audience updates
+    socket.on("audienceCount", (count) => {
+      setOnlineUsers(count);
+    });
+
+    // Cleanup listener when component unmounts
+    return () => {
+      socket.off("audienceCount");
+    };
+  }, []);
+
   return (
     <section
       className="hero"
@@ -15,7 +31,12 @@ function Hero() {
 
         <div className="open-badge">
           <span className="pulse"></span>
-          Tapri Open
+
+          <span>Tapri Open</span>
+
+          <span className="online-count">
+            · {onlineUsers} online
+          </span>
         </div>
 
         <p className="hero-subtitle">

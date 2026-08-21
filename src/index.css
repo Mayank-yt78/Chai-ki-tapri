@@ -120,6 +120,10 @@
     rgba(8, 5, 3, 0.08) 100%
   );
 }
+.online-count {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 13px;
+}
 
     .hero-content {
     position: relative;
@@ -516,6 +520,31 @@
 
     accent-color: #d9903d;
     }
+    .skip-button {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 50%;
+
+  background: transparent;
+  color: white;
+
+  cursor: pointer;
+
+  transition: 0.3s ease;
+}
+
+.skip-button:hover {
+  background: rgba(217, 144, 61, 0.15);
+  color: #d9903d;
+
+  transform: scale(1.08);
+}
 
 
     /* MOBILE */

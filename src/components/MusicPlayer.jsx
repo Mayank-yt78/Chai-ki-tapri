@@ -8,7 +8,6 @@ import {
   SkipForward,
   Volume2,
   VolumeX,
-  Music2,
 } from "lucide-react";
 
 function MusicPlayer() {
@@ -21,16 +20,37 @@ function MusicPlayer() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
-  // YouTube Playlist ID
-  const PLAYLIST_ID = "PLc7Tj6W0jXh6WJ1pMETh0TVQDcHrA14RH";
+  const [songTitle, setSongTitle] = useState("Loading...");
+  const [thumbnail, setThumbnail] = useState("");
 
-  // When YouTube player is ready
+  // Working YouTube Playlist
+  const PLAYLIST_ID = "PLcVfz1-_0rj_JexCJ4hcRldpO-yzOfM7f";
+
+  // Update current song information
+  const updateSongInfo = () => {
+    if (!playerRef.current) return;
+
+    const videoData = playerRef.current.getVideoData();
+    const videoId = videoData.video_id;
+
+    if (videoData.title) {
+      setSongTitle(videoData.title);
+    }
+
+    if (videoId) {
+      setThumbnail(
+        `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+      );
+    }
+  };
+
+  // YouTube player ready
   const onReady = (event) => {
     playerRef.current = event.target;
 
     event.target.setVolume(volume);
 
-    // Load the playlist
+    // Load playlist
     event.target.loadPlaylist({
       listType: "playlist",
       list: PLAYLIST_ID,
@@ -39,15 +59,21 @@ function MusicPlayer() {
     });
   };
 
-  // Track play / pause state
+  // Player state changes
   const onStateChange = (event) => {
-    // 1 = PLAYING
+    // PLAYING
     if (event.data === 1) {
       setIsPlaying(true);
+      updateSongInfo();
     }
 
-    // 2 = PAUSED
+    // PAUSED
     if (event.data === 2) {
+      setIsPlaying(false);
+    }
+
+    // Video changed / ended
+    if (event.data === 0) {
       setIsPlaying(false);
     }
   };
@@ -68,6 +94,10 @@ function MusicPlayer() {
     if (!playerRef.current) return;
 
     playerRef.current.nextVideo();
+
+    // Reset progress while next song loads
+    setCurrentTime(0);
+    setDuration(0);
   };
 
   // Previous song
@@ -75,6 +105,10 @@ function MusicPlayer() {
     if (!playerRef.current) return;
 
     playerRef.current.previousVideo();
+
+    // Reset progress while previous song loads
+    setCurrentTime(0);
+    setDuration(0);
   };
 
   // Mute / Unmute
@@ -90,7 +124,7 @@ function MusicPlayer() {
     }
   };
 
-  // Change volume
+  // Volume change
   const handleVolumeChange = (e) => {
     const newVolume = Number(e.target.value);
 
@@ -102,20 +136,24 @@ function MusicPlayer() {
       if (newVolume > 0) {
         playerRef.current.unMute();
         setIsMuted(false);
+      } else {
+        setIsMuted(true);
       }
     }
   };
 
-  // Update song progress
+  // Update progress every 500ms
   useEffect(() => {
     const interval = setInterval(() => {
       if (!playerRef.current) return;
 
-      const time = playerRef.current.getCurrentTime();
-      const songDuration = playerRef.current.getDuration();
+      setCurrentTime(
+        playerRef.current.getCurrentTime()
+      );
 
-      setCurrentTime(time);
-      setDuration(songDuration);
+      setDuration(
+        playerRef.current.getDuration()
+      );
     }, 500);
 
     return () => clearInterval(interval);
@@ -128,10 +166,11 @@ function MusicPlayer() {
     const newTime = Number(e.target.value);
 
     playerRef.current.seekTo(newTime, true);
+
     setCurrentTime(newTime);
   };
 
-  // Format seconds to mm:ss
+  // Format seconds → mm:ss
   const formatTime = (time) => {
     if (!time) return "0:00";
 
@@ -169,28 +208,34 @@ function MusicPlayer() {
       {/* Custom Music Player */}
       <div className="music-player">
 
-        {/* Header */}
+        {/* Current Song */}
         <div className="music-header">
 
-          <div className="music-icon">
-            <Music2 size={18} />
-          </div>
+          {thumbnail && (
+            <img
+              src={thumbnail}
+              alt={songTitle}
+              className="song-thumbnail"
+            />
+          )}
 
-          <div>
+          <div className="song-details">
             <p className="now-playing">
               NOW BREWING
             </p>
 
-            <h3>Chai & Chill ☕</h3>
+            <h3 title={songTitle}>
+              {songTitle}
+            </h3>
 
             <span className="song-name">
-              Tapri Vibes
+              Chai Ki Tapri Radio ☕
             </span>
           </div>
 
         </div>
 
-        {/* Progress Bar */}
+        {/* Progress */}
         <div className="progress-section">
 
           <input
@@ -204,13 +249,12 @@ function MusicPlayer() {
 
           <div className="time-info">
             <span>{formatTime(currentTime)}</span>
-
             <span>{formatTime(duration)}</span>
           </div>
 
         </div>
 
-        {/* Music Controls */}
+        {/* Controls */}
         <div className="player-controls">
 
           {/* Previous */}
@@ -229,7 +273,9 @@ function MusicPlayer() {
           <button
             className="play-button"
             onClick={togglePlay}
-            aria-label={isPlaying ? "Pause" : "Play"}
+            aria-label={
+              isPlaying ? "Pause" : "Play"
+            }
           >
             {isPlaying ? (
               <Pause size={24} />
@@ -255,10 +301,13 @@ function MusicPlayer() {
 
         </div>
 
-        {/* Volume Control */}
+        {/* Volume */}
         <div className="volume-control">
 
-          <button onClick={toggleMute}>
+          <button
+            onClick={toggleMute}
+            aria-label="Mute"
+          >
             {isMuted || volume === 0 ? (
               <VolumeX size={18} />
             ) : (

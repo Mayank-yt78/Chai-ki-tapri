@@ -13,6 +13,9 @@ import {
 function MusicPlayer() {
   const playerRef = useRef(null);
 
+  // Prevent initial playlist logic from running multiple times
+  const hasInitialized = useRef(false);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(70);
@@ -23,73 +26,97 @@ function MusicPlayer() {
   const [songTitle, setSongTitle] = useState("Loading...");
   const [thumbnail, setThumbnail] = useState("");
 
-  // YouTube Playlist ID
   const PLAYLIST_ID =
-  "RDCLAK5uy_miAacfMxVybbt7ketqqnPPbH9LDn1TavU";
+    "RDCLAK5uy_miAacfMxVybbt7ketqqnPPbH9LDn1TavU";
+
   // ================= UPDATE SONG INFO =================
 
   const updateSongInfo = () => {
-    if (!playerRef.current) return;
+    const player = playerRef.current;
 
-    const videoData = playerRef.current.getVideoData();
-    const videoId = videoData.video_id;
+    if (!player) return;
 
-    if (videoData.title) {
+    const videoData = player.getVideoData();
+
+    if (videoData?.title) {
       setSongTitle(videoData.title);
     }
 
-    if (videoId) {
+    if (videoData?.video_id) {
       setThumbnail(
-        `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+        `https://img.youtube.com/vi/${videoData.video_id}/hqdefault.jpg`
       );
+    }
+
+    const videoDuration = player.getDuration();
+
+    if (
+      Number.isFinite(videoDuration) &&
+      videoDuration > 0
+    ) {
+      setDuration(videoDuration);
     }
   };
 
   // ================= PLAYER READY =================
 
-const onReady = (event) => {
-  const player = event.target;
+  const onReady = (event) => {
+    const player = event.target;
 
-  playerRef.current = player;
+    playerRef.current = player;
 
-  player.setVolume(volume);
+    player.setVolume(volume);
 
-  // Get playlist first
-  player.cuePlaylist({
-    listType: "playlist",
-    list: PLAYLIST_ID,
-  });
-
-  setTimeout(() => {
-    if (!playerRef.current) return;
-
-    const playlist = playerRef.current.getPlaylist();
-
-    if (!playlist || playlist.length === 0) return;
-
-    // Generate random starting index
-    const randomIndex = Math.floor(
-      Math.random() * playlist.length
-    );
-
-    // Now load directly from random song
-    playerRef.current.loadPlaylist({
+    // Load playlist without immediately playing
+    player.cuePlaylist({
       listType: "playlist",
       list: PLAYLIST_ID,
-      index: randomIndex,
-      startSeconds: 0,
+      index: 0,
     });
+  };
 
-    // Shuffle remaining playlist
-    playerRef.current.setShuffle(true);
-
-    // Loop playlist
-    playerRef.current.setLoop(true);
-  }, 300);
-};
   // ================= PLAYER STATE =================
 
   const onStateChange = (event) => {
+    const player = playerRef.current;
+
+    if (!player) return;
+
+    /*
+      -1 = UNSTARTED
+       0 = ENDED
+       1 = PLAYING
+       2 = PAUSED
+       3 = BUFFERING
+       5 = VIDEO CUED
+    */
+
+    // Playlist/video is ready
+    if (event.data === 5 && !hasInitialized.current) {
+      const playlist = player.getPlaylist();
+
+      if (!playlist || playlist.length === 0) return;
+
+      hasInitialized.current = true;
+
+      // Choose a random song
+      const randomIndex = Math.floor(
+        Math.random() * playlist.length
+      );
+
+      // Try YouTube shuffle for subsequent songs
+      player.setShuffle(true);
+      player.setLoop(true);
+
+      // Load the random song
+      player.playVideoAt(randomIndex);
+
+      // Wait for video metadata
+      setTimeout(() => {
+        updateSongInfo();
+      }, 700);
+    }
+
     // PLAYING
     if (event.data === 1) {
       setIsPlaying(true);
@@ -102,6 +129,13 @@ const onReady = (event) => {
       setIsPlaying(false);
     }
 
+    // BUFFERING
+    if (event.data === 3) {
+      setTimeout(() => {
+        updateSongInfo();
+      }, 500);
+    }
+
     // ENDED
     if (event.data === 0) {
       setIsPlaying(false);
@@ -111,47 +145,63 @@ const onReady = (event) => {
   // ================= PLAY / PAUSE =================
 
   const togglePlay = () => {
-    if (!playerRef.current) return;
+    const player = playerRef.current;
+
+    if (!player) return;
 
     if (isPlaying) {
-      playerRef.current.pauseVideo();
+      player.pauseVideo();
     } else {
-      playerRef.current.playVideo();
+      player.playVideo();
     }
   };
 
-  // ================= NEXT SONG =================
+  // ================= NEXT =================
 
   const playNext = () => {
-    if (!playerRef.current) return;
+    const player = playerRef.current;
 
-    playerRef.current.nextVideo();
+    if (!player) return;
 
     setCurrentTime(0);
     setDuration(0);
+
+    player.nextVideo();
+
+    setTimeout(() => {
+      updateSongInfo();
+    }, 700);
   };
 
-  // ================= PREVIOUS SONG =================
+  // ================= PREVIOUS =================
 
   const playPrevious = () => {
-    if (!playerRef.current) return;
+    const player = playerRef.current;
 
-    playerRef.current.previousVideo();
+    if (!player) return;
 
     setCurrentTime(0);
     setDuration(0);
+
+    player.previousVideo();
+
+    setTimeout(() => {
+      updateSongInfo();
+    }, 700);
   };
 
-  // ================= MUTE / UNMUTE =================
+  // ================= MUTE =================
 
   const toggleMute = () => {
-    if (!playerRef.current) return;
+    const player = playerRef.current;
+
+    if (!player) return;
 
     if (isMuted) {
-      playerRef.current.unMute();
+      player.unMute();
       setIsMuted(false);
     } else {
-      playerRef.current.mute();
+      player.mute();
       setIsMuted(true);
     }
   };
@@ -163,15 +213,17 @@ const onReady = (event) => {
 
     setVolume(newVolume);
 
-    if (!playerRef.current) return;
+    const player = playerRef.current;
 
-    playerRef.current.setVolume(newVolume);
+    if (!player) return;
+
+    player.setVolume(newVolume);
 
     if (newVolume > 0) {
-      playerRef.current.unMute();
+      player.unMute();
       setIsMuted(false);
     } else {
-      playerRef.current.mute();
+      player.mute();
       setIsMuted(true);
     }
   };
@@ -180,28 +232,45 @@ const onReady = (event) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!playerRef.current) return;
+      const player = playerRef.current;
 
-      setCurrentTime(
-        playerRef.current.getCurrentTime()
-      );
+      if (!player) return;
 
-      setDuration(
-        playerRef.current.getDuration()
-      );
+      const time = player.getCurrentTime();
+      const videoDuration = player.getDuration();
+
+      if (Number.isFinite(time)) {
+        setCurrentTime(time);
+      }
+
+      if (
+        Number.isFinite(videoDuration) &&
+        videoDuration > 0
+      ) {
+        setDuration(videoDuration);
+      }
+
+      // Update title/image as soon as metadata is available
+      const videoData = player.getVideoData();
+
+      if (videoData?.title && songTitle === "Loading...") {
+        updateSongInfo();
+      }
     }, 500);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [songTitle]);
 
   // ================= SEEK =================
 
   const handleSeek = (e) => {
-    if (!playerRef.current) return;
+    const player = playerRef.current;
+
+    if (!player) return;
 
     const newTime = Number(e.target.value);
 
-    playerRef.current.seekTo(newTime, true);
+    player.seekTo(newTime, true);
 
     setCurrentTime(newTime);
   };
@@ -209,7 +278,7 @@ const onReady = (event) => {
   // ================= FORMAT TIME =================
 
   const formatTime = (time) => {
-    if (!time || !Number.isFinite(time)) {
+    if (!Number.isFinite(time) || time <= 0) {
       return "0:00";
     }
 
@@ -237,6 +306,7 @@ const onReady = (event) => {
   return (
     <>
       {/* Hidden YouTube Player */}
+
       <div className="youtube-player">
         <YouTube
           opts={opts}
@@ -246,11 +316,11 @@ const onReady = (event) => {
       </div>
 
       {/* Custom Music Player */}
+
       <div className="music-player">
+        {/* Song Info */}
 
-        {/* Current Song */}
         <div className="music-header">
-
           {thumbnail && (
             <img
               src={thumbnail}
@@ -260,7 +330,6 @@ const onReady = (event) => {
           )}
 
           <div className="song-details">
-
             <p className="now-playing">
               NOW BREWING
             </p>
@@ -272,39 +341,31 @@ const onReady = (event) => {
             <span className="song-name">
               Chai Ki Tapri Radio ☕
             </span>
-
           </div>
-
         </div>
 
         {/* Progress */}
-        <div className="progress-section">
 
+        <div className="progress-section">
           <input
             type="range"
             min="0"
             max={duration || 0}
-            value={currentTime}
+            value={Math.min(currentTime, duration || 0)}
             onChange={handleSeek}
             className="progress-bar"
           />
 
           <div className="time-info">
-            <span>
-              {formatTime(currentTime)}
-            </span>
+            <span>{formatTime(currentTime)}</span>
 
-            <span>
-              {formatTime(duration)}
-            </span>
+            <span>{formatTime(duration)}</span>
           </div>
-
         </div>
 
         {/* Controls */}
-        <div className="player-controls">
 
-          {/* Previous */}
+        <div className="player-controls">
           <button
             className="skip-button"
             onClick={playPrevious}
@@ -316,13 +377,10 @@ const onReady = (event) => {
             />
           </button>
 
-          {/* Play / Pause */}
           <button
             className="play-button"
             onClick={togglePlay}
-            aria-label={
-              isPlaying ? "Pause" : "Play"
-            }
+            aria-label={isPlaying ? "Pause" : "Play"}
           >
             {isPlaying ? (
               <Pause size={24} />
@@ -334,7 +392,6 @@ const onReady = (event) => {
             )}
           </button>
 
-          {/* Next */}
           <button
             className="skip-button"
             onClick={playNext}
@@ -345,12 +402,11 @@ const onReady = (event) => {
               fill="currentColor"
             />
           </button>
-
         </div>
 
         {/* Volume */}
-        <div className="volume-control">
 
+        <div className="volume-control">
           <button
             onClick={toggleMute}
             aria-label="Mute"
@@ -369,9 +425,7 @@ const onReady = (event) => {
             value={volume}
             onChange={handleVolumeChange}
           />
-
         </div>
-
       </div>
     </>
   );

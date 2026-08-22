@@ -6,8 +6,8 @@ function Navbar() {
 
   const navItems = [
     { label: "हमारी टपरी", href: "#top" },
-    { label: "Menu", href: "#Menu" },
-    { label: "Gallery", href: "#Gallery" },
+    // { label: "Menu", href: "#Menu" },
+    // { label: "Gallery", href: "#Gallery" },
     { label: "About", href: "#about" },
     { label: "FAQ", href: "#faq" },
   ];

@@ -23,10 +23,11 @@ function MusicPlayer() {
   const [songTitle, setSongTitle] = useState("Loading...");
   const [thumbnail, setThumbnail] = useState("");
 
-  // Working YouTube Playlist
-  const PLAYLIST_ID = "PLcVfz1-_0rj_JexCJ4hcRldpO-yzOfM7f";
+  // YouTube Playlist ID
+  const PLAYLIST_ID =
+  "RDCLAK5uy_miAacfMxVybbt7ketqqnPPbH9LDn1TavU";
+  // ================= UPDATE SONG INFO =================
 
-  // Update current song information
   const updateSongInfo = () => {
     if (!playerRef.current) return;
 
@@ -44,26 +45,55 @@ function MusicPlayer() {
     }
   };
 
-  // YouTube player ready
-  const onReady = (event) => {
-    playerRef.current = event.target;
+  // ================= PLAYER READY =================
 
-    event.target.setVolume(volume);
+const onReady = (event) => {
+  const player = event.target;
 
-    // Load playlist
-    event.target.loadPlaylist({
+  playerRef.current = player;
+
+  player.setVolume(volume);
+
+  // Get playlist first
+  player.cuePlaylist({
+    listType: "playlist",
+    list: PLAYLIST_ID,
+  });
+
+  setTimeout(() => {
+    if (!playerRef.current) return;
+
+    const playlist = playerRef.current.getPlaylist();
+
+    if (!playlist || playlist.length === 0) return;
+
+    // Generate random starting index
+    const randomIndex = Math.floor(
+      Math.random() * playlist.length
+    );
+
+    // Now load directly from random song
+    playerRef.current.loadPlaylist({
       listType: "playlist",
       list: PLAYLIST_ID,
-      index: 0,
+      index: randomIndex,
       startSeconds: 0,
     });
-  };
 
-  // Player state changes
+    // Shuffle remaining playlist
+    playerRef.current.setShuffle(true);
+
+    // Loop playlist
+    playerRef.current.setLoop(true);
+  }, 300);
+};
+  // ================= PLAYER STATE =================
+
   const onStateChange = (event) => {
     // PLAYING
     if (event.data === 1) {
       setIsPlaying(true);
+
       updateSongInfo();
     }
 
@@ -72,13 +102,14 @@ function MusicPlayer() {
       setIsPlaying(false);
     }
 
-    // Video changed / ended
+    // ENDED
     if (event.data === 0) {
       setIsPlaying(false);
     }
   };
 
-  // Play / Pause
+  // ================= PLAY / PAUSE =================
+
   const togglePlay = () => {
     if (!playerRef.current) return;
 
@@ -89,29 +120,30 @@ function MusicPlayer() {
     }
   };
 
-  // Next song
+  // ================= NEXT SONG =================
+
   const playNext = () => {
     if (!playerRef.current) return;
 
     playerRef.current.nextVideo();
 
-    // Reset progress while next song loads
     setCurrentTime(0);
     setDuration(0);
   };
 
-  // Previous song
+  // ================= PREVIOUS SONG =================
+
   const playPrevious = () => {
     if (!playerRef.current) return;
 
     playerRef.current.previousVideo();
 
-    // Reset progress while previous song loads
     setCurrentTime(0);
     setDuration(0);
   };
 
-  // Mute / Unmute
+  // ================= MUTE / UNMUTE =================
+
   const toggleMute = () => {
     if (!playerRef.current) return;
 
@@ -124,25 +156,28 @@ function MusicPlayer() {
     }
   };
 
-  // Volume change
+  // ================= VOLUME =================
+
   const handleVolumeChange = (e) => {
     const newVolume = Number(e.target.value);
 
     setVolume(newVolume);
 
-    if (playerRef.current) {
-      playerRef.current.setVolume(newVolume);
+    if (!playerRef.current) return;
 
-      if (newVolume > 0) {
-        playerRef.current.unMute();
-        setIsMuted(false);
-      } else {
-        setIsMuted(true);
-      }
+    playerRef.current.setVolume(newVolume);
+
+    if (newVolume > 0) {
+      playerRef.current.unMute();
+      setIsMuted(false);
+    } else {
+      playerRef.current.mute();
+      setIsMuted(true);
     }
   };
 
-  // Update progress every 500ms
+  // ================= PROGRESS =================
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (!playerRef.current) return;
@@ -159,7 +194,8 @@ function MusicPlayer() {
     return () => clearInterval(interval);
   }, []);
 
-  // Seek song
+  // ================= SEEK =================
+
   const handleSeek = (e) => {
     if (!playerRef.current) return;
 
@@ -170,9 +206,12 @@ function MusicPlayer() {
     setCurrentTime(newTime);
   };
 
-  // Format seconds → mm:ss
+  // ================= FORMAT TIME =================
+
   const formatTime = (time) => {
-    if (!time) return "0:00";
+    if (!time || !Number.isFinite(time)) {
+      return "0:00";
+    }
 
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
@@ -181,6 +220,8 @@ function MusicPlayer() {
       .toString()
       .padStart(2, "0")}`;
   };
+
+  // ================= YOUTUBE OPTIONS =================
 
   const opts = {
     height: "1",
@@ -198,7 +239,6 @@ function MusicPlayer() {
       {/* Hidden YouTube Player */}
       <div className="youtube-player">
         <YouTube
-          videoId="Mmu-tj-psuk"
           opts={opts}
           onReady={onReady}
           onStateChange={onStateChange}
@@ -220,6 +260,7 @@ function MusicPlayer() {
           )}
 
           <div className="song-details">
+
             <p className="now-playing">
               NOW BREWING
             </p>
@@ -231,6 +272,7 @@ function MusicPlayer() {
             <span className="song-name">
               Chai Ki Tapri Radio ☕
             </span>
+
           </div>
 
         </div>
@@ -248,8 +290,13 @@ function MusicPlayer() {
           />
 
           <div className="time-info">
-            <span>{formatTime(currentTime)}</span>
-            <span>{formatTime(duration)}</span>
+            <span>
+              {formatTime(currentTime)}
+            </span>
+
+            <span>
+              {formatTime(duration)}
+            </span>
           </div>
 
         </div>

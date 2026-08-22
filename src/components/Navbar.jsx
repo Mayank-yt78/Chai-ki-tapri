@@ -4,21 +4,27 @@ import { useState } from "react";
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const navItems = ["हमारी टपरी", "Menu", "Gallery", "About", "FAQ"];
+  const navItems = [
+    { label: "हमारी टपरी", href: "#top" },
+    { label: "Menu", href: "#Menu" },
+    { label: "Gallery", href: "#Gallery" },
+    { label: "About", href: "#about" },
+    { label: "FAQ", href: "#faq" },
+  ];
 
   return (
     <nav className="navbar">
       <div className="nav-container">
 
-        <a href="/" className="logo">
+        <a href="#top" className="logo">
           <Coffee size={28} />
           <span>चाय की टपरी</span>
         </a>
 
         <div className="desktop-nav">
           {navItems.map((item) => (
-            <a href={`#${item}`} key={item}>
-              {item}
+            <a href={item.href} key={item.label}>
+              {item.label}
             </a>
           ))}
         </div>
@@ -35,11 +41,11 @@ function Navbar() {
         <div className="mobile-nav">
           {navItems.map((item) => (
             <a
-              href={`#${item}`}
-              key={item}
+              href={item.href}
+              key={item.label}
               onClick={() => setIsOpen(false)}
             >
-              {item}
+              {item.label}
             </a>
           ))}
         </div>

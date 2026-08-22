@@ -73,6 +73,7 @@ function Hero() {
   return (
     <section
       className="hero"
+      id="top"
       style={{
         backgroundImage: `url(${backgroundImage})`,
       }}

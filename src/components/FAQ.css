@@ -1,8 +1,7 @@
 /* ================= FAQ ================= */
 
 .faq-section {
-  min-height: 100vh;
-  padding: clamp(88px, 10vw, 120px) 8% 110px;
+  padding: clamp(64px, 8vw, 96px) 8% clamp(56px, 7vw, 80px);
   background: #1c0801;
 }
 
@@ -37,7 +36,7 @@
 
   font-family: Georgia, "Times New Roman", serif;
 
-  font-size: clamp(42px, 2vw, 64px);
+  font-size: clamp(32px, 1vw, 54px);
   font-weight: 600;
 
   line-height: 1.08;
@@ -83,12 +82,11 @@
 
 .faq-question {
   width: 100%;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  padding: 16px 20px;
+  padding: 10px 20px;
 
   border: none;
 
@@ -173,8 +171,7 @@
 
 @media (max-width: 768px) {
   .faq-section {
-    min-height: auto;
-    padding: 88px 6% 72px;
+    padding: 64px 6% 56px;
   }
 
   .faq-header {
@@ -191,7 +188,7 @@
 
   .faq-question {
     gap: 12px;
-    padding: 16px;
+    padding: 10px 20px;
 
     font-size: 15px;
     line-height: 1.45;
